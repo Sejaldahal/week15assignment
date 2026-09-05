@@ -51,9 +51,9 @@ class Settings(BaseModel):
 
     # --- Gemini (primary provider) ---
     gemini_api_key: str | None = Field(default_factory=lambda: os.getenv("GEMINI_API_KEY"))
-    gemini_model: str = Field(default_factory=lambda: os.getenv("GEMINI_MODEL", "gemini-2.5-flash"))
+    gemini_model: str = Field(default_factory=lambda: os.getenv("GEMINI_MODEL", "gemini-3.6-flash"))
     gemini_embedding_model: str = Field(
-        default_factory=lambda: os.getenv("GEMINI_EMBEDDING_MODEL", "text-embedding-004")
+        default_factory=lambda: os.getenv("GEMINI_EMBEDDING_MODEL", "gemini-embedding-001")
     )
 
     # Generation defaults. See README "Prompt Engineering" for rationale.
