@@ -1,0 +1,7 @@
+# GPU-only image for the optional local fallback model.
+# Requires: NVIDIA GPU + NVIDIA Container Toolkit on the host.
+# See README "Running with vLLM" for setup instructions.
+FROM vllm/vllm-openai:latest
+
+# Model is provided at runtime via command args in docker-compose.vllm.yml,
+# so this image needs no further customization for the demo.

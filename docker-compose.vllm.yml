@@ -1,0 +1,42 @@
+# Optional GPU override. Requires an NVIDIA GPU + NVIDIA Container Toolkit
+# installed on the host (https://github.com/NVIDIA/nvidia-container-toolkit).
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.vllm.yml up --build
+#
+# This adds the vllm service and points the backend at it as a fallback.
+# If this file is NOT included, the app runs fine on Gemini alone and
+# /health simply reports vllm: null / unavailable.
+services:
+  vllm:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.vllm
+    command: >
+      --model meta-llama/Meta-Llama-3-8B-Instruct
+      --host 0.0.0.0
+      --port 8001
+      --dtype auto
+      --gpu-memory-utilization 0.9
+    ports:
+      - "8001:8001"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+
+  backend:
+    environment:
+      - VLLM_ENABLED=true
+      - VLLM_BASE_URL=http://vllm:8001/v1
+    depends_on:
+      - vllm
+      - redis
+
+volumes:
+  hf_cache:

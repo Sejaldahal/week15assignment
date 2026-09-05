@@ -1,0 +1,46 @@
+# CPU-only, GPU-free stack. Gemini is the sole LLM provider here.
+# Start with: docker compose up --build
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    env_file: .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - CHROMA_PERSIST_DIR=/app/chroma_data
+      - UPLOAD_DIR=/app/data
+      - VLLM_ENABLED=false
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./chroma_data:/app/chroma_data
+      - ./data:/app/data
+    depends_on:
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    environment:
+      - BACKEND_URL=http://backend:8000
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
