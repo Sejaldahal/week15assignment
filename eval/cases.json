@@ -1,0 +1,192 @@
+[
+ {
+  "id": "single_fact",
+  "turns": [
+   "What is the Starter plan price per seat per month at Acme?"
+  ],
+  "tools_any": [
+   "search_documents"
+  ],
+  "keywords_all": [
+   "12"
+  ],
+  "steps": [
+   2,
+   5
+  ]
+ },
+ {
+  "id": "storage",
+  "turns": [
+   "How much storage does the Acme Pro plan include?"
+  ],
+  "tools_any": [
+   "search_documents"
+  ],
+  "keywords_all": [
+   "1 TB"
+  ],
+  "steps": [
+   2,
+   5
+  ]
+ },
+ {
+  "id": "zenith_price",
+  "turns": [
+   "What does the Zenith Team plan cost per seat per month?"
+  ],
+  "tools_any": [
+   "search_documents"
+  ],
+  "keywords_all": [
+   "25"
+  ],
+  "steps": [
+   2,
+   5
+  ]
+ },
+ {
+  "id": "conflict_latest_price",
+  "turns": [
+   "What is the current Acme Pro price per seat per month?"
+  ],
+  "tools_any": [
+   "search_documents"
+  ],
+  "keywords_all": [
+   "35"
+  ],
+  "steps": [
+   2,
+   6
+  ]
+ },
+ {
+  "id": "retrieve_then_calc",
+  "turns": [
+   "What would 8 Acme Pro seats cost per month?"
+  ],
+  "tools_all": [
+   "search_documents",
+   "calculator"
+  ],
+  "keywords_all": [
+   "280"
+  ],
+  "steps": [
+   3,
+   7
+  ]
+ },
+ {
+  "id": "annual_discount",
+  "turns": [
+   "What is the yearly cost of 4 Acme Pro seats with annual billing?"
+  ],
+  "tools_all": [
+   "search_documents",
+   "calculator"
+  ],
+  "keywords_all": [
+   "1,?344"
+  ],
+  "steps": [
+   4,
+   8
+  ]
+ },
+ {
+  "id": "compare_recommend",
+  "turns": [
+   "Recommend the cheaper option for a 10-person team: Acme Starter, Acme Pro, or Zenith Team? Give the monthly totals."
+  ],
+  "tools_all": [
+   "search_documents",
+   "calculator"
+  ],
+  "keywords_all": [
+   "Zenith",
+   "250"
+  ],
+  "steps": [
+   4,
+   9
+  ]
+ },
+ {
+  "id": "calc_only",
+  "turns": [
+   "What is 15% of 2340?"
+  ],
+  "tools_all": [
+   "calculator"
+  ],
+  "keywords_all": [
+   "351"
+  ],
+  "steps": [
+   2,
+   5
+  ]
+ },
+ {
+  "id": "datetime_only",
+  "turns": [
+   "What year is it right now (UTC)?"
+  ],
+  "tools_all": [
+   "current_datetime"
+  ],
+  "keywords_all": [
+   "{year}"
+  ],
+  "steps": [
+   2,
+   5
+  ]
+ },
+ {
+  "id": "not_in_docs",
+  "turns": [
+   "What is Acme's refund policy?"
+  ],
+  "tools_any": [
+   "search_documents"
+  ],
+  "action": "abstain",
+  "steps": [
+   2,
+   5
+  ]
+ },
+ {
+  "id": "ambiguous_asks",
+  "turns": [
+   "How much does the plan cost?"
+  ],
+  "action": "ask_user",
+  "steps": [
+   1,
+   3
+  ]
+ },
+ {
+  "id": "multi_turn",
+  "turns": [
+   "How much does the plan cost?",
+   "The Acme Pro plan, per seat per month."
+  ],
+  "tools_any": [
+   "search_documents"
+  ],
+  "keywords_all": [
+   "35"
+  ],
+  "steps": [
+   2,
+   6
+  ]
+ }
+]

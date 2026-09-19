@@ -1,0 +1,3 @@
+Acme Cloud Changelog, 2025-03-01
+Price update: the Pro plan price increased from $29 to $35 per seat per month, effective 2025-03-01. Starter ($12) and Enterprise (custom) are unchanged.
+The 20% annual billing discount still applies to all self-serve plans.

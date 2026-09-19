@@ -12,3 +12,4 @@ data/*
 *.log
 .pytest_cache/
 .DS_Store
+eval/.chroma/

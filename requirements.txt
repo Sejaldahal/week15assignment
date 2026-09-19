@@ -6,7 +6,7 @@ requests==2.32.3
 python-dotenv==1.0.1
 
 # Gemini
-google-genai==0.5.0
+google-genai==1.75.0
 
 # vLLM fallback client (OpenAI-compatible)
 openai==1.57.4

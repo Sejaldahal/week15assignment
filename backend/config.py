@@ -68,6 +68,15 @@ class Settings(BaseModel):
         default_factory=lambda: os.getenv("VLLM_MODEL", "meta-llama/Meta-Llama-3-8B-Instruct")
     )
 
+    # --- Agent loop ---
+    # Which provider drives the agent loop: "gemini" or "groq" (embeddings always use Gemini).
+    agent_provider: str = Field(default_factory=lambda: os.getenv("AGENT_PROVIDER", "gemini").lower())
+    groq_api_key: str | None = Field(default_factory=lambda: os.getenv("GROQ_API_KEY"))
+    groq_model: str = Field(default_factory=lambda: os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"))
+    agent_max_steps: int = Field(default_factory=lambda: _int("AGENT_MAX_STEPS", 8))
+    # "notes" = clear old tool results + keep structured notes; "full" = keep everything (baseline)
+    agent_context_mode: str = Field(default_factory=lambda: os.getenv("AGENT_CONTEXT_MODE", "notes"))
+
     # --- Retry ---
     max_retries: int = Field(default_factory=lambda: _int("MAX_RETRIES", 3))
     retry_base_delay_seconds: float = Field(default_factory=lambda: _float("RETRY_BASE_DELAY_SECONDS", 0.5))

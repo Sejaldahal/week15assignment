@@ -24,7 +24,7 @@ from google.genai import errors as genai_errors
 
 from backend.assistant.schemas import ChatResponse
 from backend.config import Settings
-from backend.llm.base import LLMError, LLMProvider
+from backend.llm.base import AgentStep, LLMError, LLMProvider
 
 logger = logging.getLogger("ai_assistant.llm.gemini")
 
@@ -382,6 +382,68 @@ class GeminiProvider(LLMProvider):
                 f"Gemini returned invalid structured output: {exc}",
                 retryable=False,
             ) from exc
+
+    @staticmethod
+    def _to_contents(messages: list[dict]) -> list[types.Content]:
+        contents: list[types.Content] = []
+        for m in messages:
+            if m["role"] == "user":
+                contents.append(types.Content(role="user", parts=[types.Part(text=m["text"])]))
+            elif m["role"] == "model":
+                # Echo the original turn back untouched when we have it.
+                contents.append(
+                    m.get("raw")
+                    or types.Content(
+                        role="model",
+                        parts=[types.Part(function_call=types.FunctionCall(**m["call"]))],
+                    )
+                )
+            else:
+                contents.append(
+                    types.Content(
+                        role="user",
+                        parts=[
+                            types.Part(
+                                function_response=types.FunctionResponse(
+                                    name=m["name"], response={"result": m["result"]}
+                                )
+                            )
+                        ],
+                    )
+                )
+        return contents
+
+    async def step(self, system_prompt: str, messages: list[dict], tools: list[dict]) -> AgentStep:
+        try:
+            resp = await self._client.aio.models.generate_content(
+                model=self._settings.gemini_model,
+                contents=self._to_contents(messages),
+                config=types.GenerateContentConfig(
+                    system_instruction=system_prompt,
+                    temperature=self._settings.temperature,
+                    tools=[types.Tool(function_declarations=[_to_function_declaration(t) for t in tools])],
+                    # Every turn must be a tool call, so the loop never has to parse prose.
+                    tool_config=types.ToolConfig(
+                        function_calling_config=types.FunctionCallingConfig(mode="ANY")
+                    ),
+                ),
+            )
+        except genai_errors.APIError as exc:
+            raise self._classify(exc) from exc
+
+        usage = getattr(resp, "usage_metadata", None)
+        try:
+            raw = resp.candidates[0].content
+            text = "".join(p.text for p in raw.parts if getattr(p, "text", None))
+        except (IndexError, AttributeError, TypeError):
+            raw, text = None, ""
+        return AgentStep(
+            call=self._extract_function_call(resp),
+            text=text,
+            prompt_tokens=getattr(usage, "prompt_token_count", 0) or 0,
+            output_tokens=getattr(usage, "candidates_token_count", 0) or 0,
+            raw=raw,
+        )
 
     @staticmethod
     def _extract_function_call(response) -> dict | None:

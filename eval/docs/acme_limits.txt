@@ -1,0 +1,4 @@
+Acme Cloud Plan Limits
+Starter: maximum 5 seats, 100 GB storage total.
+Pro: maximum 50 seats, 1 TB storage total.
+Enterprise: unlimited seats, storage negotiated per contract.

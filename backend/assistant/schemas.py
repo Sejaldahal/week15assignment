@@ -16,6 +16,10 @@ class ChatRequest(BaseModel):
         default=True,
         description="If true, retrieve relevant document chunks before answering.",
     )
+    agent: bool = Field(
+        default=False,
+        description="If true, answer with the agentic verification loop instead of the single-pass pipeline.",
+    )
 
 
 class SourceChunk(BaseModel):
@@ -33,6 +37,15 @@ class ChatResponse(BaseModel):
     tool_used: str | None = None
     confidence: float = Field(ge=0.0, le=1.0, default=0.0)
     provider: Literal["gemini", "vllm", "none"] = "gemini"
+
+
+class AgentChatResponse(ChatResponse):
+    """ChatResponse plus agent-loop metadata. Kept as a subclass so the W15
+    single-pass structured-output schema sent to Gemini is unchanged."""
+
+    needs_clarification: bool = False
+    trace: list[dict[str, Any]] | None = None
+    usage: dict[str, int] | None = None
 
 
 class ErrorResponse(BaseModel):

@@ -72,15 +72,16 @@ ai-assistant/
 │   ├── main.py                  # FastAPI app, wiring
 │   ├── config.py                # env-driven Settings
 │   ├── api/                     # routes_chat, routes_documents, routes_health, routes_config
-│   ├── llm/                     # base (interface), gemini, vllm, factory (fallback chain)
+│   ├── llm/                     # base (interface), gemini, groq, vllm, factory (fallback chain)
 │   ├── rag/                     # ingestion, chunking, embeddings, vector_store, retriever
-│   ├── tools/                   # calculator, time_tool, registry
-│   ├── assistant/               # orchestrator, prompts, schemas
+│   ├── tools/                   # calculator, time_tool, registry, agent_tools (W16)
+│   ├── assistant/               # orchestrator, prompts, schemas, agent (W16 loop)
 │   ├── middleware/               # rate_limit, request_id
 │   ├── cache/                    # base, memory_cache, redis_cache
 │   └── utils/                    # logging, retry, errors
 ├── frontend/streamlit_app.py
 ├── tests/                        # pytest, all external calls mocked
+├── eval/                         # W16 evaluation harness, cases, docs, results.md
 ├── data/                         # uploaded documents (gitignored)
 ├── chroma_data/                  # persisted vector index (gitignored)
 ├── docker/                       # Dockerfile.backend / .frontend / .vllm
@@ -182,7 +183,7 @@ vLLM service (see §10).
 
 | Method | Path | Purpose |
 |---|---|---|
-| `POST` | `/chat` | `{message, session_id, use_rag}` → `ChatResponse` |
+| `POST` | `/chat` | `{message, session_id, use_rag, agent}` → `ChatResponse` (`agent: true` runs the W16 loop, see §25) |
 | `POST` | `/documents/upload` | multipart file upload → ingests into ChromaDB |
 | `GET` | `/health` | status of API, Gemini, vector DB, Redis, vLLM |
 | `GET` | `/config` | safe, non-secret configuration |
@@ -321,3 +322,95 @@ not this project's use case.
 - Add per-session conversation history/context window management.
 - Add authentication and per-API-key rate limiting instead of per-IP.
 - Add OpenTelemetry tracing spans on top of the existing structured logs.
+
+## 25. W16: Agentic Verification Loop
+
+`POST /chat` with `"agent": true` runs `AgentRunner` (`backend/assistant/agent.py`) instead of the single-pass
+pipeline. Each turn the model must call one tool: `search_documents`, `calculator`, `current_datetime`,
+`record_note`, `ask_user` or `finish`. The loop ends on `finish`, on `ask_user` (the reply arrives as the next
+message with the same `session_id`), or after `AGENT_MAX_STEPS` (default 8), which returns a partial answer from the
+verified notes at confidence 0.2. Diagram: [`ARCHITECTURE.md`](./ARCHITECTURE.md). Config: `AGENT_PROVIDER`
+(`gemini` or `groq`; embeddings always use Gemini), `GROQ_API_KEY`, `GROQ_MODEL`, `AGENT_MAX_STEPS`, `AGENT_CONTEXT_MODE`.
+
+**Why a fixed pipeline is not enough.** Our test documents contain an old and a newer Pro price and separate seat
+limits, so what to look up next (the newer source, another document, a calculation, or the user) depends on what
+the previous result showed, which a fixed retrieve-then-answer sequence cannot know in advance.
+
+### a. Context engineering technique
+**Structured external notes + clearing old tool results + capped retrieval**, applied in `AgentRunner._render()`,
+which rebuilds the model's context before every step. Problem: each `search_documents` result is a few hundred
+tokens, and a multi-search task (comparison, annual price) runs 5-9 steps; a normal chat history would re-send every
+earlier result on every later step, so the prompt grows with each iteration. Now only the latest tool result stays
+in full; older ones become one-line stubs (`search_documents(...) -> 3 chunks: id1, id2, id3`), and anything needed
+later must be saved with `record_note` (claim, source chunk, verified flag), which is re-injected each turn.
+Retrieval is capped at 3 chunks of 500 characters. `AGENT_CONTEXT_MODE=full` turns the clearing off and is the
+baseline in the eval. Measured effect: **none in our eval.** Average tokens per query were 4,706 with clearing (`notes`) vs
+4,579 without (`full`), and completion was 9/12 vs 11/12 (one run each, so partly noise). Our tasks are short (3-6
+steps, results of a few hundred tokens), so there is little history to clear, and the extra `record_note` turns cost
+about what the clearing saves. In `notes` mode the agent also skipped the calculator twice (right number, wrong tool
+use); in `full` mode it never did. Clearing keeps prompt size from growing with each search, but we have not shown
+a benefit on this workload; `AGENT_CONTEXT_MODE=full` is the better setting until longer tasks are tested.
+
+### b. Agentic pattern: single-agent loop
+Every step depends on the previous result (search, then note, then calculate), so there is nothing to run in
+parallel. Context saturation is handled by the notes and clearing above, which is cheaper than a sub-agent that
+would add coordination tokens. Six small tools keep skill dilution low. The self-verification paradox is reduced
+because claims are checked against retrieved chunks and tool output (the `verified` flag), and a code guard caps
+confidence when a tool failed and nothing was verified. The single point of failure is accepted and mitigated by the
+step cap, errors returned as observations, and a limitation report instead of a guess.
+
+### c. Evaluation harness (`python -m eval.run_eval`, no framework)
+12 queries in `eval/cases.json` over four synthetic documents in `eval/docs/` (single fact, conflicting sources,
+retrieve-then-calculate, comparison, calculator-only, datetime-only, not-in-docs, ambiguous, two-turn clarification),
+run against the real API and written to `eval/results.md` / `results.json`. Per query it records:
+- **Task completion:** expected keywords in the answer, or the expected action (ask the user / abstain).
+- **Tool-call correctness:** expected tools were used, plus the share of calls with schema-valid arguments.
+- **Trajectory length:** model turns, checked against an expected range per case.
+- **Tokens:** prompt + output tokens summed over the query (embedding calls not counted).
+- **Failure class:** for any case that is not both completed and tool-correct. **Hard** = no usable answer (model
+  unreachable or step cap hit). **Cascading soft** = an earlier bad step (tool error, invalid arguments, empty
+  retrieval) carried into a wrong answer. **Soft** = wrong or unsupported answer, or wrong tool use, with no earlier
+  bad step. These are our working definitions of the class taxonomy.
+
+**Results** (`openai/gpt-oss-20b` on Groq, one run per mode; full tables in `eval/results.md`):
+
+| mode | completion | tool-correct | valid args | avg steps | in range | avg tokens |
+|---|---|---|---|---|---|---|
+| `notes` (clearing on) | 9/12 | 10/12 | 100% | 4.5 | 10/12 | 4,706 |
+| `full` (baseline) | 11/12 | 12/12 | 100% | 4.0 | 12/12 | 4,579 |
+
+`notes` failures: 2 hard (`compare_recommend`, `not_in_docs` hit the step cap; on `not_in_docs` the agent kept
+re-searching instead of concluding the documents lack the answer), 3 soft (`retrieve_then_calc` and `annual_discount`
+gave the right number without the calculator; `ambiguous_asks` guessed the Starter plan instead of asking), 0 cascading
+soft. `full` failures: 1 hard (`compare_recommend`: Groq rejected a malformed tool call even after retries, so the
+model call failed), 0 soft, 0 cascading soft. None of the failures came from a bad tool result carried forward; they
+are step-cap exhaustion, a model-call error, or the model choosing the wrong action (skipping the calculator, guessing
+instead of asking).
+
+### Failure injection
+`AgentRunner` accepts an optional `tool_hook`, used only by the eval and tests (nothing in `backend/` sets it). We
+break `search_documents` two ways, on three queries each: it times out (`search_down`), or returns corrupted output
+(`malformed`, rejected by the output check). The agent detected the failure in 12/12 runs (6 per mode), retried or rephrased, and
+ended with an explicit "could not verify" answer at confidence 0.0-0.3, never a confident figure; all 12 passed. The first live
+injection run exposed a real gap: after retrying, the agent ended with `ask_user`, echoing the user's own question
+back. We added a guard so that after a tool failure with nothing verified, `ask_user` or a prose reply becomes a
+limitation report (`tests/test_agent.py::test_failed_tool_then_ask_user_reports_limitation`).
+
+### Skill vs Agent
+The verification behaviour could not be a Skill, because a Skill only loads instructions into context while
+retrieval, arithmetic and the stop-or-ask decision need tool execution and control flow; the guidance text in our
+system prompt could be a Skill, but it is short and needed on every turn, so progressive disclosure would save nothing.
+
+### Tool vs agent boundary
+The external services (the LLM API, the embedding API, ChromaDB) are modelled as bounded tool calls, not as agents.
+`search_documents` is one call with a timeout, a capped result and an output check; it holds no task state and returns
+to our loop after a single round trip. The multi-step behaviour (rephrase, search another document, retry) lives in our
+own loop where we can cap it and trace it, and the only state is the per-session notes and pending question that
+`AgentRunner` keeps in memory. Agent-to-agent delegation would add coordination cost for a service that never needs to
+decide anything.
+
+### Known limitations
+12 cases, one run per mode on a small model, so numbers are indicative, not statistically meaningful. Two step ranges
+(`calc_only`, `datetime_only`) and `AGENT_MAX_STEPS` (6 to 8) were adjusted after a first run showed they were too
+tight. Session state is in memory (lost on restart). Run the harness with `python -m eval.run_eval --context both`.
+

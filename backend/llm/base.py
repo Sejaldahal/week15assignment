@@ -6,6 +6,7 @@ provider directly - this is what makes fallback and testing simple.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Any
 
 from backend.assistant.schemas import ChatResponse
@@ -19,8 +20,28 @@ class LLMError(Exception):
         self.retryable = retryable
 
 
+@dataclass
+class AgentStep:
+    """One model turn in the agent loop: either a tool call or plain text."""
+
+    call: dict | None = None  # {"name": str, "args": dict}
+    text: str = ""
+    prompt_tokens: int = 0
+    output_tokens: int = 0
+    raw: Any = None  # provider-specific turn object, echoed back in history
+
+
 class LLMProvider(ABC):
     name: str = "base"
+
+    async def step(self, system_prompt: str, messages: list[dict], tools: list[dict]) -> AgentStep:
+        """
+        One turn of the agent loop. `messages` is provider-neutral:
+        {"role": "user", "text"} | {"role": "model", "call", "raw"} |
+        {"role": "tool", "name", "result"}. Optional: only providers used
+        for the agent need it.
+        """
+        raise NotImplementedError(f"{self.name} does not support agent steps")
 
     @abstractmethod
     async def generate_structured(

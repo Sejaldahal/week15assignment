@@ -10,6 +10,7 @@ import json
 import logging
 import time
 
+from backend.assistant.agent import AgentRunner
 from backend.assistant.prompts import SYSTEM_PROMPT, build_context_block, build_user_turn
 from backend.assistant.schemas import ChatResponse, SourceChunk
 from backend.cache.base import Cache, build_cache_key
@@ -34,8 +35,15 @@ class Orchestrator:
         self._llm = llm_chain
         self._store = vector_store
         self._cache = cache
+        self.agent = AgentRunner(settings, llm_chain, vector_store)
 
-    async def handle_chat(self, message: str, session_id: str, use_rag: bool) -> ChatResponse:
+    async def handle_chat(
+        self, message: str, session_id: str, use_rag: bool, agent: bool = False
+    ) -> ChatResponse:
+        if agent:
+            # Stateful and multi-step: bypasses the response cache and up-front retrieval.
+            return await self.agent.run(message, session_id)
+
         retrieval_ms = 0.0
         chunks: list[dict] = []
 

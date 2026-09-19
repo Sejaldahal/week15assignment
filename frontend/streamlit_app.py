@@ -39,6 +39,7 @@ with st.sidebar:
 
     st.divider()
     use_rag = st.checkbox("Use document context (RAG)", value=True)
+    agent_mode = st.checkbox("Agent mode (W16 verification loop)", value=False)
 
     st.divider()
     st.header("System status")
@@ -68,8 +69,9 @@ if prompt := st.chat_input("Ask me anything..."):
                         "message": prompt,
                         "session_id": st.session_state.session_id,
                         "use_rag": use_rag,
+                        "agent": agent_mode,
                     },
-                    timeout=60,
+                    timeout=180 if agent_mode else 60,
                 )
                 resp.raise_for_status()
                 data = resp.json()
@@ -79,10 +81,25 @@ if prompt := st.chat_input("Ask me anything..."):
                     meta_parts.append(f"tool: {data['tool_used']}")
                 if data.get("sources"):
                     meta_parts.append(f"{len(data['sources'])} source chunk(s)")
+                if data.get("usage"):
+                    meta_parts.append(f"{data['usage']['total_tokens']} tokens, {data['usage']['steps']} steps")
+                if data.get("needs_clarification"):
+                    meta_parts.append("asking you a question - reply to continue")
                 meta = " · ".join(meta_parts)
 
                 st.markdown(answer)
                 st.caption(meta)
+                if data.get("trace"):
+                    with st.expander("Agent trace"):
+                        for t in data["trace"]:
+                            line = f"{t['step']}. **{t.get('tool') or 'model'}**"
+                            if t.get("args"):
+                                line += f" `{t['args']}`"
+                            if t.get("error"):
+                                line += f" - error: {str(t['error'])[:150]}"
+                            elif t.get("note"):
+                                line += f" - {t['note']}"
+                            st.markdown(line)
                 if data.get("sources"):
                     with st.expander("Sources"):
                         for s in data["sources"]:

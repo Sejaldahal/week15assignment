@@ -82,3 +82,38 @@ sequenceDiagram
     end
     API-->>U: ChatResponse (JSON)
 ```
+
+## Agentic verification loop (W16)
+
+`POST /chat` with `"agent": true` bypasses the single-pass pipeline and the response cache and runs
+`AgentRunner` (`backend/assistant/agent.py`): a **single-agent loop**, one tool call per model turn.
+
+```mermaid
+flowchart TB
+    U([User message + session_id]) --> C
+    C["Context step (every iteration)<br/>question + NOTES<br/>+ latest tool result only<br/>older results become 1-line stubs"] --> A
+    A["Agent (Groq or Gemini)<br/>chooses the next action"] --> D{Decision}
+
+    D -->|search_documents| T1["Retriever + Chroma<br/>max 3 chunks x 500 chars"]
+    D -->|calculator / current_datetime| T2[Tool registry]
+    D -->|record_note| T3[(Notes: claim, source, verified)]
+    T1 --> O["Observation<br/>(errors and malformed output<br/>are returned, not raised)"]
+    T2 --> O
+    T3 --> O
+    O --> L{"step < AGENT_MAX_STEPS ?"}
+    L -->|yes| C
+    L -->|"no: step cap"| P["Stop: partial answer from<br/>verified notes, confidence 0.2"]
+
+    D -->|ask_user| Q["Stop: return question<br/>needs_clarification = true<br/>(state kept per session_id)"]
+    D -->|finish| G["Guard: tool failed and nothing<br/>verified, so confidence is capped"]
+
+    G --> R([Final response: answer, sources, trace, token usage])
+    P --> R
+    Q --> R
+```
+
+**Stopping conditions:** `finish`, `ask_user`, or the step cap (`AGENT_MAX_STEPS`, default 8). If a tool failed and
+nothing was verified, `ask_user` or a prose reply becomes a limitation report instead of a question or a guess.
+
+**Providers:** agent turns go to Groq or Gemini (`AGENT_PROVIDER`); embeddings for retrieval always use Gemini.
+The evaluation harness (`eval/run_eval.py`) drives `AgentRunner` directly and injects faults through its `tool_hook`.

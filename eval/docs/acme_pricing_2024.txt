@@ -1,0 +1,3 @@
+Acme Cloud Price List (published 2024-01-15)
+Per-seat monthly prices: Starter plan $12 per seat per month. Pro plan $29 per seat per month. Enterprise plan: custom quote.
+Annual billing: customers who pay annually receive a 20% discount on the total yearly price.
