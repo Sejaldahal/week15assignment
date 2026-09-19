@@ -1,4 +1,4 @@
-Week 16 assignment is done in another branch
+
 # AI Assistant — Production-Oriented Reference Implementation
 
 A demonstration AI assistant built to showcase how a real assistant is designed and
