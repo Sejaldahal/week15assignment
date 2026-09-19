@@ -1,6 +1,4 @@
-## Demo
 
-![AI Assistant Demo](output.png)
 # AI Assistant — Production-Oriented Reference Implementation
 
 A demonstration AI assistant built to showcase how a real assistant is designed and
