@@ -412,3 +412,127 @@ decide anything.
 (`calc_only`, `datetime_only`) and `AGENT_MAX_STEPS` (6 to 8) were adjusted after a first run showed they were too
 tight. Session state is in memory (lost on restart). Run the harness with `python -m eval.run_eval --context both`.
 
+
+---
+
+# W17 — Agentic AI MLOps (uv · MLflow · Evidently)
+
+The W15 assistant and W16 agent are unchanged except for two small edits: `AgentRunner` accepts an optional
+`system_prompt` and records the model's own text (`decision`) on each trace step, and `groq.py` now retries
+`output_parse_failed` errors (see v4). Everything W17-specific lives in `mlops/`.
+
+```
+mlops/prompts/agent_v{1,2,3}.txt   prompt versions (v4 reuses v3's prompt)
+mlops/versions.json                config per version (prompt file, max_steps, context mode, model, description)
+mlops/run_version.py               agent eval -> traces -> Evidently regression -> MLflow
+mlops/regression.py                Evidently LLM-judge Test Suite
+mlops/regression_set.json          11 queries + golden answers
+mlops/compare.py                   exports the MLflow comparison to mlops/run_comparison.md
+mlops/runs/vN/                     results.json (all traces), regression.json, evidently_report.html
+```
+
+## Environment (uv)
+```bash
+uv sync                      # from uv.lock
+# create .env with GROQ_API_KEY, GEMINI_API_KEY (Gemini is used for embeddings), AGENT_PROVIDER=groq
+```
+`evidently[llm]` requires a newer `openai` than the old `openai==1.57.4` pin, so `pyproject.toml` uses
+`openai>=1.57` (the code only uses the stable `AsyncOpenAI` client). `sqlalchemy<2.1` is pinned for MLflow 2.x.
+The 28 existing tests pass under the new environment (`uv run pytest`). `requirements.txt` is kept for the Docker build only.
+
+## Commands
+```bash
+uv run python -m mlops.run_version v1          # run agent on 12 eval cases, judge, log to MLflow
+uv run python -m mlops.run_version v4 --from-saved   # re-judge/re-log saved traces without calling the agent
+uv run python -m mlops.compare                 # write mlops/run_comparison.md
+uv run mlflow ui --backend-store-uri sqlite:///mlflow.db    # experiment "agent-prompt-versions"
+```
+The Groq/Gemini free tiers are rate limited; the harness paces calls (about 5 minutes per version) and a judge pass
+takes about 5 more.
+
+## Experiment tracking strategy
+Each version is one MLflow run. Logged **params**: prompt version, prompt file and SHA, max_steps, context mode,
+agent model, temperature, retrieval top-k, judge model, provider fix. **Metrics**: the W16 harness numbers
+(completion, tool correctness, steps, tokens), termination-reason counts, hard failures, and the Evidently regression
+results (`pct_tests_passed`, `pct_correct`, `pct_no_fabrication`). **Artifacts**: the prompt file, full harness results,
+the Evidently HTML report and verdicts, and 3 traces per version (`traces/`: one success, up to two failures). Each trace
+records every tool call with arguments and result, the model's decision text, iteration count and termination reason
+(`finish`, `ask_user`, `max_steps_hit`, `model_call_failed`, `prose_answer_no_finish`).
+
+## Results (12 harness cases, 1 run per version)
+| version | agent model | max_steps | completion | tools_ok | avg steps | avg tokens | hard failures | model_call_failed | max_steps_hit | pct_tests_passed |
+|---|---|---|---|---|---|---|---|---|---|---|
+| v1 | gpt-oss-120b | 8 | 0.67 | 0.92 | 5.2 | 5399 | 4 | 3 | 1 | 72.7 |
+| v2 | gpt-oss-120b | 8 | 0.67 | 1.00 | 4.4 | 5057 | 4 | 3 | 1 | 72.7 |
+| v3 | gpt-oss-120b | 12 | 0.58 | 1.00 | 5.1 | 6235 | 5 | 4 | 1 | 63.6 |
+| **v4** | gpt-oss-20b | 12 | **0.83** | 0.92 | 4.7 | 5970 | **1** | **1** | 0 | 72.7 |
+
+(also in `mlops/run_comparison.md`). `pct_tests_passed` is over 11 regression cases; both judge checks must pass.
+
+## Which failure caused each revision
+**v1 (baseline: the W16 prompt).** Traces showed three distinct failures:
+1. `retrieve_then_calc`, `calc_only`, `datetime_only`: after the last `record_note` the model wrote prose ("We have
+   verified notes. Now finish.") instead of calling `finish`. The loop nudged once, the model did it again, and Groq
+   rejected the output with `400 output_parse_failed`, so the loop ended with "could not reach the model" (hard failure).
+2. `not_in_docs`: 7 near-identical searches for the refund policy, then a prose answer without `finish`.
+3. `compare_recommend`: duplicate searches (Zenith 3 times) plus notes used the whole 8-step budget before any total was calculated.
+
+**v2 (prompt fix for those three).** Adds "never write prose; call finish", a search budget of two per topic, "don't
+re-search noted facts", and "plan finish inside the step budget". Result: `not_in_docs` now ends cleanly in 6 steps
+with `finish`, tool correctness rose to 1.00 and average steps fell 5.2 to 4.4. It did **not** fix failure 1
+(still 3 `model_call_failed`; the model wrote "Need finish." instead of calling the tool) or failure 3
+(`compare_recommend` still hit the budget).
+
+**v3 (config + prompt).** The v2 traces showed why `compare_recommend` still failed: only the latest tool result stays
+in context, so the agent searched Zenith again because it hadn't noted the price before the next search cleared it.
+Changes: a "note it before your next search" rule and `max_steps` 8 to 12. I also *intended* to switch the model from 20b to 120b,
+but `GROQ_MODEL` isn't set in `.env`, so 120b was already the default used by v1 and v2. **The model did not change in v3**,
+and the config records this. Result: worse (completion 0.58, 4 `model_call_failed`). The extra steps didn't rescue
+`compare_recommend` (still `max_steps_hit`), and the parse failures were unchanged, so prompt and budget were not the problem.
+
+**v4 (root cause).** Reading all `model_call_failed` traces together showed each was `400 output_parse_failed` from Groq.
+`groq.py` treats `tool_use_failed` as retryable but not `output_parse_failed`, so the existing retry logic
+was never used. v4 makes it retryable (resampling at temperature 0.3), and also runs `gpt-oss-20b` instead of 120b.
+Result: completion 0.83, `model_call_failed` 4 to 1, no step-budget failures, 11 of 12 cases end in `finish`.
+
+## What the comparison shows
+v4 is the best version on the harness (highest completion, fewest hard failures), so it is the one to keep. But
+the Evidently regression score barely moves (72.7 for v1, v2 and v4; 63.6 for v3), and I don't want to oversell v4:
+- **The v4 gain is confounded.** I changed the retry logic *and* the model in one step, so I can't say how much is
+  due to each. The failure pattern (4 to 1 parse-failure terminations) points to the retry fix, but I did not run
+  120b + retry to isolate it: that model's daily Groq token quota was used up by then.
+- **Different failures, similar score.** v1/v2 fail regression on 3 hard failures. v4 fails on 1 hard failure
+  (`compare_recommend`) plus two cases that the harness and judge see differently (below).
+- **`compare_recommend` is unsolved in every version.** It needs about three searches, three calculations and a
+  finish, and no version completed it.
+- **`ambiguous_asks` regressed in v4:** the agent guessed a Starter price instead of asking which plan. v3 had the
+  same prompt and asked correctly, so I read this as run-to-run variance in a single-run comparison, not a fix or a regression of the prompt.
+- Each version was run once, so differences of one or two cases are within noise.
+
+## Regression testing (Evidently)
+`mlops/regression_set.json` holds 11 queries with golden answers (`datetime_only` is excluded because its correct answer
+changes with the date). **I wrote the golden answers from the documents in `eval/docs`, not from a version's output; please
+review them, since the assignment calls for approved references.** For each version the final answers are judged with
+Evidently's `LLMEval` + `BinaryClassificationPromptTemplate` (`TextEvals` report with tests, saved as
+`mlops/runs/vN/evidently_report.html`):
+1. **correctness** (reference-based): does the answer contradict or lose information from the golden answer? Must be `correct`.
+2. **no_fabrication**: does it state specific facts unsupported by the golden answer? Must be `clean`.
+
+A case passes only if both checks pass; `pct_tests_passed` is logged to MLflow. The judge is `qwen/qwen3.8-27b` on Groq, a
+different model family from the gpt-oss agent. (Gemini and gpt-oss-120b were tried first, but their free quotas ran out.) Set
+`JUDGE_BACKEND=gemini` to use Gemini.
+
+**Judge sanity check.** I read the failed verdicts against the raw answers. The judge was right that every "could not
+reach the model" and "could not finish" answer fails, and right that v4's `ambiguous_asks` answer (guessing $12 instead
+of asking which plan) is wrong and unsupported. It was **wrong once**: v4's `calc_only` answered "15% of 2340 is 351.0",
+which equals 351, but the judge marked it incorrect, so v4's true pass rate is 81.8% (9/11), not 72.7%. The judge is also
+not deterministic: a first judging pass on the same v4 answers gave 81.8%. Treat one-case differences between versions as noise.
+The other tests weren't affected: the harness's keyword check and the judge agree on the clear-cut cases.
+
+## Limitations
+- One agent run per version, 12 cases; small differences are not statistically meaningful.
+- The v4 model/retry change is confounded (above).
+- Judge and agent are both LLMs. The judge had one false negative and is not deterministic.
+- Golden answers are written by me and need your review.
+- The failure-injection tests from W16 (`eval/run_eval.py --inject`) were not re-run for W17.
+- Airflow bonus not implemented.

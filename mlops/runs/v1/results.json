@@ -1,0 +1,1136 @@
+[
+ {
+  "row": {
+   "id": "single_fact",
+   "fault": null,
+   "completed": true,
+   "tools_ok": true,
+   "call_valid_rate": 1.0,
+   "n_calls": 2,
+   "steps": 4,
+   "steps_ok": true,
+   "tokens": 3951,
+   "confidence": 0.95,
+   "answer": "The Starter plan costs $12 per seat per month at Acme.",
+   "failure_recognized": null,
+   "tools": [
+    "search_documents",
+    "record_note"
+   ],
+   "hard": false,
+   "first_error": null,
+   "early_flag": false,
+   "class": null
+  },
+  "case": {
+   "id": "single_fact",
+   "turns": [
+    "What is the Starter plan price per seat per month at Acme?"
+   ],
+   "tools_any": [
+    "search_documents"
+   ],
+   "keywords_all": [
+    "12"
+   ],
+   "steps": [
+    2,
+    5
+   ]
+  },
+  "trace": [
+   {
+    "step": 1,
+    "tool": "search_documents",
+    "args": {
+     "query": "Acme Starter plan price per seat per month"
+    },
+    "error": null,
+    "result": "{\"query\": \"Acme Starter plan price per seat per month\", \"n_results\": 3, \"chunks\": [{\"chun\u2026",
+    "turn": 1
+   },
+   {
+    "step": 2,
+    "tool": "record_note",
+    "args": {
+     "claim": "Starter plan price is $12 per seat per month",
+     "source": "55792b133d71-c0",
+     "verified": true
+    },
+    "error": null,
+    "result": "{\"ok\": true, \"notes\": 1}",
+    "turn": 1
+   },
+   {
+    "step": 3,
+    "tool": null,
+    "note": "no tool call; nudged to call a tool",
+    "turn": 1
+   },
+   {
+    "step": 4,
+    "tool": "finish",
+    "args": {
+     "answer": "The Starter plan costs $12 per seat per month at Acme.",
+     "confidence": 0.95
+    },
+    "turn": 1
+   }
+  ],
+  "final_answer": "The Starter plan costs $12 per seat per month at Acme.",
+  "iterations": 4,
+  "termination": "finish"
+ },
+ {
+  "row": {
+   "id": "storage",
+   "fault": null,
+   "completed": true,
+   "tools_ok": true,
+   "call_valid_rate": 1.0,
+   "n_calls": 2,
+   "steps": 4,
+   "steps_ok": true,
+   "tokens": 3913,
+   "confidence": 0.99,
+   "answer": "The Acme Pro plan includes 1\u202fTB of storage.",
+   "failure_recognized": null,
+   "tools": [
+    "search_documents",
+    "record_note"
+   ],
+   "hard": false,
+   "first_error": null,
+   "early_flag": false,
+   "class": null
+  },
+  "case": {
+   "id": "storage",
+   "turns": [
+    "How much storage does the Acme Pro plan include?"
+   ],
+   "tools_any": [
+    "search_documents"
+   ],
+   "keywords_all": [
+    "1 TB"
+   ],
+   "steps": [
+    2,
+    5
+   ]
+  },
+  "trace": [
+   {
+    "step": 1,
+    "tool": "search_documents",
+    "args": {
+     "query": "Acme Pro plan storage"
+    },
+    "error": null,
+    "result": "{\"query\": \"Acme Pro plan storage\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \"5cb6667e1626-\u2026",
+    "turn": 1
+   },
+   {
+    "step": 2,
+    "tool": "record_note",
+    "args": {
+     "claim": "The Acme Pro plan includes 1 TB storage total.",
+     "source": "5cb6667e1626-c0",
+     "verified": true
+    },
+    "error": null,
+    "result": "{\"ok\": true, \"notes\": 1}",
+    "turn": 1
+   },
+   {
+    "step": 3,
+    "tool": null,
+    "note": "no tool call; nudged to call a tool",
+    "turn": 1
+   },
+   {
+    "step": 4,
+    "tool": "finish",
+    "args": {
+     "answer": "The Acme Pro plan includes 1\u202fTB of storage.",
+     "confidence": 0.99
+    },
+    "turn": 1
+   }
+  ],
+  "final_answer": "The Acme Pro plan includes 1\u202fTB of storage.",
+  "iterations": 4,
+  "termination": "finish"
+ },
+ {
+  "row": {
+   "id": "zenith_price",
+   "fault": null,
+   "completed": true,
+   "tools_ok": true,
+   "call_valid_rate": 1.0,
+   "n_calls": 2,
+   "steps": 4,
+   "steps_ok": true,
+   "tokens": 3909,
+   "confidence": 0.99,
+   "answer": "The Zenith Team plan costs $25 per seat per month.",
+   "failure_recognized": null,
+   "tools": [
+    "search_documents",
+    "record_note"
+   ],
+   "hard": false,
+   "first_error": null,
+   "early_flag": false,
+   "class": null
+  },
+  "case": {
+   "id": "zenith_price",
+   "turns": [
+    "What does the Zenith Team plan cost per seat per month?"
+   ],
+   "tools_any": [
+    "search_documents"
+   ],
+   "keywords_all": [
+    "25"
+   ],
+   "steps": [
+    2,
+    5
+   ]
+  },
+  "trace": [
+   {
+    "step": 1,
+    "tool": "search_documents",
+    "args": {
+     "query": "Zenith Team plan cost per seat per month"
+    },
+    "error": null,
+    "result": "{\"query\": \"Zenith Team plan cost per seat per month\", \"n_results\": 3, \"chunks\": [{\"chunk_\u2026",
+    "turn": 1
+   },
+   {
+    "step": 2,
+    "tool": "record_note",
+    "args": {
+     "claim": "Zenith Team plan costs $25 per seat per month",
+     "source": "d80357001d55-c0",
+     "verified": true
+    },
+    "error": null,
+    "result": "{\"ok\": true, \"notes\": 1}",
+    "turn": 1
+   },
+   {
+    "step": 3,
+    "tool": null,
+    "note": "no tool call; nudged to call a tool",
+    "turn": 1
+   },
+   {
+    "step": 4,
+    "tool": "finish",
+    "args": {
+     "answer": "The Zenith Team plan costs $25 per seat per month.",
+     "confidence": 0.99
+    },
+    "turn": 1
+   }
+  ],
+  "final_answer": "The Zenith Team plan costs $25 per seat per month.",
+  "iterations": 4,
+  "termination": "finish"
+ },
+ {
+  "row": {
+   "id": "conflict_latest_price",
+   "fault": null,
+   "completed": true,
+   "tools_ok": true,
+   "call_valid_rate": 1.0,
+   "n_calls": 2,
+   "steps": 4,
+   "steps_ok": true,
+   "tokens": 3975,
+   "confidence": 0.99,
+   "answer": "The current price for Acme Pro is $35 per seat per month.",
+   "failure_recognized": null,
+   "tools": [
+    "search_documents",
+    "record_note"
+   ],
+   "hard": false,
+   "first_error": null,
+   "early_flag": false,
+   "class": null
+  },
+  "case": {
+   "id": "conflict_latest_price",
+   "turns": [
+    "What is the current Acme Pro price per seat per month?"
+   ],
+   "tools_any": [
+    "search_documents"
+   ],
+   "keywords_all": [
+    "35"
+   ],
+   "steps": [
+    2,
+    6
+   ]
+  },
+  "trace": [
+   {
+    "step": 1,
+    "tool": "search_documents",
+    "args": {
+     "query": "Acme Pro price per seat per month"
+    },
+    "error": null,
+    "result": "{\"query\": \"Acme Pro price per seat per month\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \"5\u2026",
+    "turn": 1
+   },
+   {
+    "step": 2,
+    "tool": "record_note",
+    "args": {
+     "claim": "Acme Pro price is $35 per seat per month",
+     "source": "c4edfcc6d1c2-c0",
+     "verified": true
+    },
+    "error": null,
+    "result": "{\"ok\": true, \"notes\": 1}",
+    "turn": 1
+   },
+   {
+    "step": 3,
+    "tool": null,
+    "note": "no tool call; nudged to call a tool",
+    "turn": 1
+   },
+   {
+    "step": 4,
+    "tool": "finish",
+    "args": {
+     "answer": "The current price for Acme Pro is $35 per seat per month.",
+     "confidence": 0.99
+    },
+    "turn": 1
+   }
+  ],
+  "final_answer": "The current price for Acme Pro is $35 per seat per month.",
+  "iterations": 4,
+  "termination": "finish"
+ },
+ {
+  "row": {
+   "id": "retrieve_then_calc",
+   "fault": null,
+   "completed": false,
+   "tools_ok": true,
+   "call_valid_rate": 1.0,
+   "n_calls": 4,
+   "steps": 6,
+   "steps_ok": true,
+   "tokens": 5280,
+   "confidence": 0.0,
+   "answer": "The assistant could not reach the model, so no answer was produced.",
+   "failure_recognized": null,
+   "tools": [
+    "search_documents",
+    "record_note",
+    "calculator",
+    "record_note"
+   ],
+   "hard": true,
+   "first_error": "model call failed: Groq error: Error code: 400 - {'error': {'message': \"Parsing failed. The model generated output that could not be parsed. Please adjust your prompt. See 'failed_generation' for more",
+   "early_flag": true,
+   "class": "hard"
+  },
+  "case": {
+   "id": "retrieve_then_calc",
+   "turns": [
+    "What would 8 Acme Pro seats cost per month?"
+   ],
+   "tools_all": [
+    "search_documents",
+    "calculator"
+   ],
+   "keywords_all": [
+    "280"
+   ],
+   "steps": [
+    3,
+    7
+   ]
+  },
+  "trace": [
+   {
+    "step": 1,
+    "tool": "search_documents",
+    "args": {
+     "query": "Acme Pro seat price per month"
+    },
+    "error": null,
+    "result": "{\"query\": \"Acme Pro seat price per month\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \"55792\u2026",
+    "turn": 1
+   },
+   {
+    "step": 2,
+    "tool": "record_note",
+    "args": {
+     "claim": "Acme Pro plan price is $35 per seat per month effective 2025-03-01",
+     "source": "c4edfcc6d1c2-c0",
+     "verified": true
+    },
+    "error": null,
+    "result": "{\"ok\": true, \"notes\": 1}",
+    "turn": 1
+   },
+   {
+    "step": 3,
+    "tool": "calculator",
+    "args": {
+     "expression": "8 * 35"
+    },
+    "error": null,
+    "result": "{\"expression\": \"8 * 35\", \"result\": 280}",
+    "turn": 1
+   },
+   {
+    "step": 4,
+    "tool": "record_note",
+    "args": {
+     "claim": "8 Acme Pro seats cost $280 per month",
+     "source": "calculator result",
+     "verified": true
+    },
+    "error": null,
+    "result": "{\"ok\": true, \"notes\": 2}",
+    "turn": 1
+   },
+   {
+    "step": 5,
+    "tool": null,
+    "note": "no tool call; nudged to call a tool",
+    "turn": 1
+   },
+   {
+    "step": 6,
+    "tool": null,
+    "error": "model call failed: Groq error: Error code: 400 - {'error': {'message': \"Parsing failed. The model generated output that could not be parsed. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'output_parse_failed', 'failed_generation': 'We have verified notes. Now finish.'}}",
+    "turn": 1
+   }
+  ],
+  "final_answer": "The assistant could not reach the model, so no answer was produced.",
+  "iterations": 6,
+  "termination": "model_call_failed"
+ },
+ {
+  "row": {
+   "id": "annual_discount",
+   "fault": null,
+   "completed": true,
+   "tools_ok": true,
+   "call_valid_rate": 1.0,
+   "n_calls": 6,
+   "steps": 8,
+   "steps_ok": true,
+   "tokens": 10247,
+   "confidence": 1.0,
+   "answer": "The yearly cost for 4 Acme Pro seats with annual billing is $1,344.",
+   "failure_recognized": null,
+   "tools": [
+    "search_documents",
+    "record_note",
+    "search_documents",
+    "calculator",
+    "search_documents",
+    "record_note"
+   ],
+   "hard": false,
+   "first_error": null,
+   "early_flag": false,
+   "class": null
+  },
+  "case": {
+   "id": "annual_discount",
+   "turns": [
+    "What is the yearly cost of 4 Acme Pro seats with annual billing?"
+   ],
+   "tools_all": [
+    "search_documents",
+    "calculator"
+   ],
+   "keywords_all": [
+    "1,?344"
+   ],
+   "steps": [
+    4,
+    8
+   ]
+  },
+  "trace": [
+   {
+    "step": 1,
+    "tool": "search_documents",
+    "args": {
+     "query": "Acme Pro seat annual billing price"
+    },
+    "error": null,
+    "result": "{\"query\": \"Acme Pro seat annual billing price\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \"\u2026",
+    "turn": 1
+   },
+   {
+    "step": 2,
+    "tool": "record_note",
+    "args": {
+     "claim": "Pro plan price is $35 per seat per month (effective 2025-03-01)",
+     "source": "c4edfcc6d1c2-c0",
+     "verified": true
+    },
+    "error": null,
+    "result": "{\"ok\": true, \"notes\": 1}",
+    "turn": 1
+   },
+   {
+    "step": 3,
+    "tool": "search_documents",
+    "args": {
+     "query": "annual billing discount Acme Pro"
+    },
+    "error": null,
+    "result": "{\"query\": \"annual billing discount Acme Pro\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \"55\u2026",
+    "turn": 1
+   },
+   {
+    "step": 4,
+    "tool": "calculator",
+    "args": {
+     "expression": "35*4*12*0.8"
+    },
+    "error": null,
+    "result": "{\"expression\": \"35*4*12*0.8\", \"result\": 1344.0}",
+    "turn": 1
+   },
+   {
+    "step": 5,
+    "tool": "search_documents",
+    "args": {
+     "query": "Acme annual billing discount 20%"
+    },
+    "error": null,
+    "result": "{\"query\": \"Acme annual billing discount 20%\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \"55\u2026",
+    "turn": 1
+   },
+   {
+    "step": 6,
+    "tool": "record_note",
+    "args": {
+     "claim": "Yearly cost for 4 Pro seats with annual billing is $1,344",
+     "source": "c4edfcc6d1c2-c0",
+     "verified": true
+    },
+    "error": null,
+    "result": "{\"ok\": true, \"notes\": 2}",
+    "turn": 1
+   },
+   {
+    "step": 7,
+    "tool": null,
+    "note": "no tool call; nudged to call a tool",
+    "turn": 1
+   },
+   {
+    "step": 8,
+    "tool": "finish",
+    "args": {
+     "answer": "The yearly cost for 4 Acme Pro seats with annual billing is $1,344.",
+     "confidence": 1
+    },
+    "turn": 1
+   }
+  ],
+  "final_answer": "The yearly cost for 4 Acme Pro seats with annual billing is $1,344.",
+  "iterations": 8,
+  "termination": "finish"
+ },
+ {
+  "row": {
+   "id": "compare_recommend",
+   "fault": null,
+   "completed": false,
+   "tools_ok": false,
+   "call_valid_rate": 1.0,
+   "n_calls": 8,
+   "steps": 9,
+   "steps_ok": true,
+   "tokens": 10916,
+   "confidence": 0.2,
+   "answer": "I could not finish within 8 steps. What I verified so far: Acme Starter price per seat per month is $12; Acme Pro price per seat per month is $35; Zenith Team p",
+   "failure_recognized": null,
+   "tools": [
+    "search_documents",
+    "search_documents",
+    "record_note",
+    "search_documents",
+    "search_documents",
+    "record_note",
+    "search_documents",
+    "record_note"
+   ],
+   "hard": true,
+   "first_error": null,
+   "early_flag": false,
+   "class": "hard"
+  },
+  "case": {
+   "id": "compare_recommend",
+   "turns": [
+    "Recommend the cheaper option for a 10-person team: Acme Starter, Acme Pro, or Zenith Team? Give the monthly totals."
+   ],
+   "tools_all": [
+    "search_documents",
+    "calculator"
+   ],
+   "keywords_all": [
+    "Zenith",
+    "250"
+   ],
+   "steps": [
+    4,
+    9
+   ]
+  },
+  "trace": [
+   {
+    "step": 1,
+    "tool": "search_documents",
+    "args": {
+     "query": "Acme Starter price per user per month"
+    },
+    "error": null,
+    "result": "{\"query\": \"Acme Starter price per user per month\", \"n_results\": 3, \"chunks\": [{\"chunk_id\"\u2026",
+    "turn": 1
+   },
+   {
+    "step": 2,
+    "tool": "search_documents",
+    "args": {
+     "query": "Zenith Team price per seat per month"
+    },
+    "error": null,
+    "result": "{\"query\": \"Zenith Team price per seat per month\", \"n_results\": 3, \"chunks\": [{\"chunk_id\":\u2026",
+    "turn": 1
+   },
+   {
+    "step": 3,
+    "tool": "record_note",
+    "args": {
+     "claim": "Acme Starter price per seat per month is $12",
+     "source": "55792b133d71-c0",
+     "verified": true
+    },
+    "error": null,
+    "result": "{\"ok\": true, \"notes\": 1}",
+    "turn": 1
+   },
+   {
+    "step": 4,
+    "tool": "search_documents",
+    "args": {
+     "query": "Acme Pro price per seat per month"
+    },
+    "error": null,
+    "result": "{\"query\": \"Acme Pro price per seat per month\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \"5\u2026",
+    "turn": 1
+   },
+   {
+    "step": 5,
+    "tool": "search_documents",
+    "args": {
+     "n_results": 5,
+     "query": "Zenith Team price per seat per month"
+    },
+    "error": null,
+    "result": "{\"query\": \"Zenith Team price per seat per month\", \"n_results\": 3, \"chunks\": [{\"chunk_id\":\u2026",
+    "turn": 1
+   },
+   {
+    "step": 6,
+    "tool": "record_note",
+    "args": {
+     "claim": "Acme Pro price per seat per month is $35",
+     "source": "c4edfcc6d1c2-c0",
+     "verified": true
+    },
+    "error": null,
+    "result": "{\"ok\": true, \"notes\": 2}",
+    "turn": 1
+   },
+   {
+    "step": 7,
+    "tool": "search_documents",
+    "args": {
+     "query": "Zenith Team pricing"
+    },
+    "error": null,
+    "result": "{\"query\": \"Zenith Team pricing\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \"d80357001d55-c0\u2026",
+    "turn": 1
+   },
+   {
+    "step": 8,
+    "tool": "record_note",
+    "args": {
+     "claim": "Zenith Team price per seat per month is $25",
+     "source": "d80357001d55-c0",
+     "verified": true
+    },
+    "error": null,
+    "result": "{\"ok\": true, \"notes\": 3}",
+    "turn": 1
+   },
+   {
+    "step": 8,
+    "tool": null,
+    "note": "step budget exhausted",
+    "turn": 1
+   }
+  ],
+  "final_answer": "I could not finish within 8 steps. What I verified so far: Acme Starter price per seat per month is $12; Acme Pro price per seat per month is $35; Zenith Team price per seat per month is $25",
+  "iterations": 9,
+  "termination": "max_steps_hit"
+ },
+ {
+  "row": {
+   "id": "calc_only",
+   "fault": null,
+   "completed": false,
+   "tools_ok": true,
+   "call_valid_rate": 1.0,
+   "n_calls": 2,
+   "steps": 4,
+   "steps_ok": true,
+   "tokens": 2558,
+   "confidence": 0.0,
+   "answer": "The assistant could not reach the model, so no answer was produced.",
+   "failure_recognized": null,
+   "tools": [
+    "calculator",
+    "record_note"
+   ],
+   "hard": true,
+   "first_error": "model call failed: Groq error: Error code: 400 - {'error': {'message': \"Parsing failed. The model generated output that could not be parsed. Please adjust your prompt. See 'failed_generation' for more",
+   "early_flag": true,
+   "class": "hard"
+  },
+  "case": {
+   "id": "calc_only",
+   "turns": [
+    "What is 15% of 2340?"
+   ],
+   "tools_all": [
+    "calculator"
+   ],
+   "keywords_all": [
+    "351"
+   ],
+   "steps": [
+    2,
+    5
+   ]
+  },
+  "trace": [
+   {
+    "step": 1,
+    "tool": "calculator",
+    "args": {
+     "expression": "0.15 * 2340"
+    },
+    "error": null,
+    "result": "{\"expression\": \"0.15 * 2340\", \"result\": 351.0}",
+    "turn": 1
+   },
+   {
+    "step": 2,
+    "tool": "record_note",
+    "args": {
+     "claim": "15% of 2340 is 351",
+     "source": "calculator",
+     "verified": true
+    },
+    "error": null,
+    "result": "{\"ok\": true, \"notes\": 1}",
+    "turn": 1
+   },
+   {
+    "step": 3,
+    "tool": null,
+    "note": "no tool call; nudged to call a tool",
+    "turn": 1
+   },
+   {
+    "step": 4,
+    "tool": null,
+    "error": "model call failed: Groq error: Error code: 400 - {'error': {'message': \"Parsing failed. The model generated output that could not be parsed. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'output_parse_failed', 'failed_generation': 'We have note. Now finish.'}}",
+    "turn": 1
+   }
+  ],
+  "final_answer": "The assistant could not reach the model, so no answer was produced.",
+  "iterations": 4,
+  "termination": "model_call_failed"
+ },
+ {
+  "row": {
+   "id": "datetime_only",
+   "fault": null,
+   "completed": false,
+   "tools_ok": true,
+   "call_valid_rate": 1.0,
+   "n_calls": 2,
+   "steps": 4,
+   "steps_ok": true,
+   "tokens": 2530,
+   "confidence": 0.0,
+   "answer": "The assistant could not reach the model, so no answer was produced.",
+   "failure_recognized": null,
+   "tools": [
+    "current_datetime",
+    "record_note"
+   ],
+   "hard": true,
+   "first_error": "model call failed: Groq error: Error code: 400 - {'error': {'message': \"Parsing failed. The model generated output that could not be parsed. Please adjust your prompt. See 'failed_generation' for more",
+   "early_flag": true,
+   "class": "hard"
+  },
+  "case": {
+   "id": "datetime_only",
+   "turns": [
+    "What year is it right now (UTC)?"
+   ],
+   "tools_all": [
+    "current_datetime"
+   ],
+   "keywords_all": [
+    "{year}"
+   ],
+   "steps": [
+    2,
+    5
+   ]
+  },
+  "trace": [
+   {
+    "step": 1,
+    "tool": "current_datetime",
+    "args": {},
+    "error": null,
+    "result": "{\"utc_iso\": \"2026-09-25T18:28:43.492756+00:00\", \"unix_timestamp\": 1790360923}",
+    "turn": 1
+   },
+   {
+    "step": 2,
+    "tool": "record_note",
+    "args": {
+     "claim": "The current year in UTC is 2026.",
+     "source": "current_datetime",
+     "verified": true
+    },
+    "error": null,
+    "result": "{\"ok\": true, \"notes\": 1}",
+    "turn": 1
+   },
+   {
+    "step": 3,
+    "tool": null,
+    "note": "no tool call; nudged to call a tool",
+    "turn": 1
+   },
+   {
+    "step": 4,
+    "tool": null,
+    "error": "model call failed: Groq error: Error code: 400 - {'error': {'message': \"Parsing failed. The model generated output that could not be parsed. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'output_parse_failed', 'failed_generation': 'We have note. Now finish.'}}",
+    "turn": 1
+   }
+  ],
+  "final_answer": "The assistant could not reach the model, so no answer was produced.",
+  "iterations": 4,
+  "termination": "model_call_failed"
+ },
+ {
+  "row": {
+   "id": "not_in_docs",
+   "fault": null,
+   "completed": true,
+   "tools_ok": true,
+   "call_valid_rate": 1.0,
+   "n_calls": 7,
+   "steps": 8,
+   "steps_ok": false,
+   "tokens": 10614,
+   "confidence": 0.3,
+   "answer": "{\n  \"answer\": \"The provided documents do not contain information about Acme's refund policy, so the refund policy cannot be verified from the available sources.",
+   "failure_recognized": null,
+   "tools": [
+    "search_documents",
+    "search_documents",
+    "search_documents",
+    "search_documents",
+    "search_documents",
+    "search_documents",
+    "search_documents"
+   ],
+   "hard": false,
+   "first_error": null,
+   "early_flag": false,
+   "class": null
+  },
+  "case": {
+   "id": "not_in_docs",
+   "turns": [
+    "What is Acme's refund policy?"
+   ],
+   "tools_any": [
+    "search_documents"
+   ],
+   "action": "abstain",
+   "steps": [
+    2,
+    5
+   ]
+  },
+  "trace": [
+   {
+    "step": 1,
+    "tool": "search_documents",
+    "args": {
+     "query": "Acme refund policy"
+    },
+    "error": null,
+    "result": "{\"query\": \"Acme refund policy\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \"55792b133d71-c0\"\u2026",
+    "turn": 1
+   },
+   {
+    "step": 2,
+    "tool": "search_documents",
+    "args": {
+     "query": "refund policy Acme"
+    },
+    "error": null,
+    "result": "{\"query\": \"refund policy Acme\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \"55792b133d71-c0\"\u2026",
+    "turn": 1
+   },
+   {
+    "step": 3,
+    "tool": "search_documents",
+    "args": {
+     "query": "Acme refund"
+    },
+    "error": null,
+    "result": "{\"query\": \"Acme refund\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \"55792b133d71-c0\", \"docu\u2026",
+    "turn": 1
+   },
+   {
+    "step": 4,
+    "tool": "search_documents",
+    "args": {
+     "query": "Acme refund policy terms"
+    },
+    "error": null,
+    "result": "{\"query\": \"Acme refund policy terms\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \"55792b133d\u2026",
+    "turn": 1
+   },
+   {
+    "step": 5,
+    "tool": "search_documents",
+    "args": {
+     "query": "Acme refund policy document"
+    },
+    "error": null,
+    "result": "{\"query\": \"Acme refund policy document\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \"55792b1\u2026",
+    "turn": 1
+   },
+   {
+    "step": 6,
+    "tool": "search_documents",
+    "args": {
+     "query": "refund"
+    },
+    "error": null,
+    "result": "{\"query\": \"refund\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \"5cb6667e1626-c0\", \"document\"\u2026",
+    "turn": 1
+   },
+   {
+    "step": 7,
+    "tool": "search_documents",
+    "args": {
+     "query": "Acme refund policy terms of service"
+    },
+    "error": null,
+    "result": "{\"query\": \"Acme refund policy terms of service\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \u2026",
+    "turn": 1
+   },
+   {
+    "step": 8,
+    "tool": null,
+    "note": "no tool call; text treated as final",
+    "turn": 1
+   }
+  ],
+  "final_answer": "{\n  \"answer\": \"The provided documents do not contain information about Acme's refund policy, so the refund policy cannot be verified from the available sources.\",\n  \"confidence\": 0.2\n}",
+  "iterations": 8,
+  "termination": "prose_answer_no_finish"
+ },
+ {
+  "row": {
+   "id": "ambiguous_asks",
+   "fault": null,
+   "completed": true,
+   "tools_ok": true,
+   "call_valid_rate": 1.0,
+   "n_calls": 0,
+   "steps": 1,
+   "steps_ok": true,
+   "tokens": 795,
+   "confidence": 0.0,
+   "answer": "Which specific plan are you asking about? Please provide the plan name.",
+   "failure_recognized": null,
+   "tools": [],
+   "hard": false,
+   "first_error": null,
+   "early_flag": false,
+   "class": null
+  },
+  "case": {
+   "id": "ambiguous_asks",
+   "turns": [
+    "How much does the plan cost?"
+   ],
+   "action": "ask_user",
+   "steps": [
+    1,
+    3
+   ]
+  },
+  "trace": [
+   {
+    "step": 1,
+    "tool": "ask_user",
+    "args": {
+     "question": "Which specific plan are you asking about? Please provide the plan name."
+    },
+    "turn": 1
+   }
+  ],
+  "final_answer": "Which specific plan are you asking about? Please provide the plan name.",
+  "iterations": 1,
+  "termination": "ask_user"
+ },
+ {
+  "row": {
+   "id": "multi_turn",
+   "fault": null,
+   "completed": true,
+   "tools_ok": true,
+   "call_valid_rate": 1.0,
+   "n_calls": 3,
+   "steps": 6,
+   "steps_ok": true,
+   "tokens": 6097,
+   "confidence": 0.99,
+   "answer": "The Acme Pro plan costs $35 per seat per month.",
+   "failure_recognized": null,
+   "tools": [
+    "search_documents",
+    "search_documents",
+    "record_note"
+   ],
+   "hard": false,
+   "first_error": null,
+   "early_flag": false,
+   "class": null
+  },
+  "case": {
+   "id": "multi_turn",
+   "turns": [
+    "How much does the plan cost?",
+    "The Acme Pro plan, per seat per month."
+   ],
+   "tools_any": [
+    "search_documents"
+   ],
+   "keywords_all": [
+    "35"
+   ],
+   "steps": [
+    2,
+    6
+   ]
+  },
+  "trace": [
+   {
+    "step": 1,
+    "tool": "search_documents",
+    "args": {
+     "query": "plan cost"
+    },
+    "error": null,
+    "result": "{\"query\": \"plan cost\", \"n_results\": 3, \"chunks\": [{\"chunk_id\": \"55792b133d71-c0\", \"docume\u2026",
+    "turn": 1
+   },
+   {
+    "step": 2,
+    "tool": "ask_user",
+    "args": {
+     "question": "Which specific plan are you asking about (e.g., Starter, Pro, Basic, Team, etc.)?"
+    },
+    "turn": 1
+   },
+   {
+    "step": 1,
+    "tool": "search_documents",
+    "args": {
+     "query": "Acme Pro plan per seat per month price"
+    },
+    "error": null,
+    "result": "{\"query\": \"Acme Pro plan per seat per month price\", \"n_results\": 3, \"chunks\": [{\"chunk_id\u2026",
+    "turn": 2
+   },
+   {
+    "step": 2,
+    "tool": "record_note",
+    "args": {
+     "claim": "Acme Pro plan costs $35 per seat per month (effective 2025-03-01)",
+     "source": "c4edfcc6d1c2-c0",
+     "verified": true
+    },
+    "error": null,
+    "result": "{\"ok\": true, \"notes\": 1}",
+    "turn": 2
+   },
+   {
+    "step": 3,
+    "tool": null,
+    "note": "no tool call; nudged to call a tool",
+    "turn": 2
+   },
+   {
+    "step": 4,
+    "tool": "finish",
+    "args": {
+     "answer": "The Acme Pro plan costs $35 per seat per month.",
+     "confidence": 0.99
+    },
+    "turn": 2
+   }
+  ],
+  "final_answer": "The Acme Pro plan costs $35 per seat per month.",
+  "iterations": 6,
+  "termination": "finish"
+ }
+]

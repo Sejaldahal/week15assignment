@@ -1,0 +1,6 @@
+| version   | agent model              |   max_steps |   completion |   tools_ok |   avg_steps |   avg_tokens |   hard_fail |   model_call_failed |   max_steps_hit |   pct_correct |   pct_no_fabrication |   pct_tests_passed |
+|:----------|:-------------------------|------------:|-------------:|-----------:|------------:|-------------:|------------:|--------------------:|----------------:|--------------:|---------------------:|-------------------:|
+| v1        | groq/openai/gpt-oss-120b |           8 |         0.67 |       0.92 |         5.2 |         5399 |           4 |                   3 |               1 |          72.7 |                100   |               72.7 |
+| v2        | groq/openai/gpt-oss-120b |           8 |         0.67 |       1    |         4.4 |         5057 |           4 |                   3 |               1 |          72.7 |                100   |               72.7 |
+| v3        | groq/openai/gpt-oss-120b |          12 |         0.58 |       1    |         5.1 |         6235 |           5 |                   4 |               1 |          63.6 |                100   |               63.6 |
+| v4        | groq/openai/gpt-oss-20b  |          12 |         0.83 |       0.92 |         4.7 |         5970 |           1 |                   1 |               0 |          72.7 |                 90.9 |               72.7 |

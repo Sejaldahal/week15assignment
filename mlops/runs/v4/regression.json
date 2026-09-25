@@ -1,0 +1,110 @@
+{
+ "metrics": {
+  "pct_tests_passed": 72.7,
+  "pct_correct": 72.7,
+  "pct_no_fabrication": 90.9,
+  "n_tests": 11,
+  "n_failed": 3
+ },
+ "verdicts": [
+  {
+   "id": "single_fact",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The new answer states that the Starter plan costs $12 per seat per month at Acme. This matches the reference answer which states the Acme Starter plan costs $12 per seat per month. The key figure ($12), the entity (Acme), and the specific plan/unit (Starter plan per seat per month) are identical. Therefore, the answer is correct.",
+   "fabrication_reason": "The reference explicitly states that the Acme Starter plan costs $12 per seat per month. The new answer states exactly the same price and conditions. Therefore, the answer is consistent with the reference and contains no fabrication.",
+   "answer": "The Starter plan costs $12 per seat per month at Acme."
+  },
+  {
+   "id": "storage",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The new answer states that the Acme Pro plan includes 1 TB of storage, which aligns perfectly with the core fact in the reference answer ('includes 1 TB of storage in total'). While the reference answer includes additional context in parentheses ('max 50 seats'), the question specifically asked for the storage amount. The new answer provides the correct storage number and does not contradict the reference or drop the key fact relevant to the specific question asked. Therefore, it is considered correct.",
+   "fabrication_reason": "The reference explicitly states that the Acme Pro plan includes '1 TB of storage in total'. The new answer states 'The Acme Pro plan includes 1 TB of storage.' Although the answer omits the detail about 'max 50 seats', the specific fact asserted (1 TB of storage) is directly supported by the reference. There are no contradictions or unsupported additional facts.",
+   "answer": "The Acme Pro plan includes 1\u202fTB of storage."
+  },
+  {
+   "id": "zenith_price",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The new answer matches the reference answer exactly in terms of the numerical value ($25) and the unit (per seat per month), conveying the same facts without contradiction.",
+   "fabrication_reason": "The text states that the Zenith Team plan costs $25 per seat per month. This exact figure and detail are present in the reference material. Therefore, the statement is consistent with the reference and contains no fabrication.",
+   "answer": "The Zenith Team plan costs $25 per seat per month."
+  },
+  {
+   "id": "conflict_latest_price",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The new answer states '$35 per seat per month', which aligns with the key fact in the reference answer that 'The current Acme Pro price is $35 per seat per month.' Although the new answer omits the historical context regarding the price increase from $29, it correctly provides the current price requested in the question and does not contain any contradictory information. Therefore, it is classified as correct.",
+   "fabrication_reason": "The text states '$35 per seat per month'. The reference explicitly states 'The current Acme Pro price is $35 per seat per month.' Therefore, the specific fact in the text is directly supported by the reference, making it clean.",
+   "answer": "$35 per seat per month"
+  },
+  {
+   "id": "retrieve_then_calc",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The new answer ($280 per month) matches the reference answer (8 x $35 = $280) exactly. It conveys the same key fact and number without any contradiction or omission.",
+   "fabrication_reason": "The reference explicitly states that 8 Acme Pro seats cost $280 per month. The answer provided is '$280 per month', which matches the specific fact and arithmetic consequence derived directly from the reference text. Therefore, it is consistent and not fabricated.",
+   "answer": "$280 per month"
+  },
+  {
+   "id": "annual_discount",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The reference states that the yearly cost is $1,344. The new answer provides the exact same figure ($1,344) and directly answers the question asked. It does not contradict the reference or drop any key facts relevant to the specific question.",
+   "fabrication_reason": "The answer states the cost is $1,344. The reference explicitly states that '4 Acme Pro seats cost $1,344 per year with annual billing'. Therefore, the specific fact in the answer is directly supported by the reference.",
+   "answer": "The yearly cost for 4 Acme\u202fPro seats with annual billing is $1,344."
+  },
+  {
+   "id": "compare_recommend",
+   "correctness": "incorrect",
+   "no_fabrication": "clean",
+   "passed": false,
+   "correctness_reason": "The reference answer provides a specific recommendation (Zenith Team) and monthly totals for all three options, noting that Acme Starter is unsuitable due to seat limits. The new answer states that no answer was produced because the model could not be reached. This contradicts the reference by failing to provide the requested facts and recommendation, which the reference clearly contains. Therefore, it is incorrect.",
+   "fabrication_reason": "The text states that no answer was produced due to a connection error. It does not make any specific factual claims about prices, limits, or policies that could be fact-checked against the reference. Admitting inability to answer or reporting a system error without providing false information is considered clean.",
+   "answer": "The assistant could not reach the model, so no answer was produced."
+  },
+  {
+   "id": "calc_only",
+   "correctness": "incorrect",
+   "no_fabrication": "clean",
+   "passed": false,
+   "correctness_reason": "The reference answer states that 15% of 2340 is 351. To verify the factual accuracy, I calculate 0.15 * 2340, which equals 351. The new answer states that 15% of 2340 is 351.0 (or 351. If interpreted as 351.0, the numerical value is the same. However, looking closely at the prompt's reference '351' and the new answer '351.0'. Often in these tasks, if the number is wrong, it is incorrect. Let's re-read carefully. Reference: 351. New Answer: 351.0. Numerically 351 == 351.0. Wait, did I miscalculate? 10% of 2340 is 234. 5% of 2340 is 117. 234 + 117 = 351. The calculation in the reference is correct. The calculation in the new answer is 351.0. This is numerically equivalent. However, usually, if the text says '351' and the other says '351.0', they are the same value. Let me double check if there's a trick. Maybe the new answer has a typo? '351.0' is 351. Is it possible the intended answer was different? No, 15% of 2340 is definitely 351. So both convey the same number. Why would it be incorrect? Let me re-read the 'incorrect' criteria: 'if a key number/decision differs'. 351 and 351.0 do not differ in value. However, sometimes strict string matching is implied or significant figures matter? Unlikely for a simple arithmetic question. Let's look closer at the text. '15% of 2340 is 351.0'. This is factually true. It conveys the same fact as the reference. Therefore, it should be correct.\n\nWait, let me look at the reference again. '15% of 2340 is 351.' The new answer is '15% of 2340 is 351.0'. They are identical in meaning. I will classify this as correct.",
+   "fabrication_reason": "The reference states that 15% of 2340 is 351. The new answer states '351.0'. Mathematically, 351 and 351.0 are identical values. Therefore, the answer is consistent with the reference and involves no fabrication.",
+   "answer": "15% of 2340 is 351.0"
+  },
+  {
+   "id": "not_in_docs",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The reference answer states that the documents do not contain Acme's refund policy and that the assistant should indicate it cannot answer from the documents. The new answer correctly states that the provided documents do not contain information about Acme's refund policy. It conveys the same core fact (that the policy is not available in the source text) without inventing a policy or contradicting the reference.",
+   "fabrication_reason": "The NEW ANSWER states that the provided documents do not contain information about Acme's refund policy. This is consistent with the REFERENCE, which explicitly states that 'The documents do not contain Acme's refund policy.' Therefore, the NEW ANSWER does not fabricate any information and is classified as clean.",
+   "answer": "The provided documents do not contain information about Acme\u2019s refund policy."
+  },
+  {
+   "id": "ambiguous_asks",
+   "correctness": "incorrect",
+   "no_fabrication": "fabricated",
+   "passed": false,
+   "correctness_reason": "The reference answer explicitly states that the question is ambiguous because it does not specify which plan is being asked about, and the assistant should have asked for clarification (e.g., vendor and tier) rather than guessing. The NEW ANSWER confidently provides a specific price ($12 per seat per month) for a 'Starter plan,' which contradicts the instruction to abstain from guessing and instead ask a clarifying question. This is a failure to follow the required behavior for ambiguous queries.",
+   "fabrication_reason": "The reference explicitly states that the question does not specify which plan the user is asking about and that the assistant should ask for clarification instead of guessing. The text being evaluated provides a specific price ($12 per seat per month) and a specific plan name ('Starter plan') without any supporting reference for these details. Since the reference highlights the lack of information regarding the specific plan, stating a specific price constitutes a fabrication of facts not supported by the provided context.",
+   "answer": "The Starter plan costs $12 per seat per month."
+  },
+  {
+   "id": "multi_turn",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The new answer states that the Acme Pro plan costs $35 per seat per month. The reference answer states that after clarification, the Acme Pro plan costs $35 per seat per month. Both answers convey the same specific price ($35) and the same unit (per seat per month). Although the new answer does not explicitly mention the clarification step, it provides the final factual answer consistent with the reference, thereby conveying the same key facts without contradiction or omission of the core information.",
+   "fabrication_reason": "The new answer states that the Acme Pro plan costs $35 per seat per month. The reference explicitly confirms that the Acme Pro plan costs $35 per seat per month. The specific facts match exactly, so there is no fabrication.",
+   "answer": "The Acme Pro plan costs $35 per seat per month."
+  }
+ ]
+}

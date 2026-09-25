@@ -63,7 +63,10 @@ class GroqProvider(LLMProvider):
             )
         except APIStatusError as exc:
             # Some models sometimes emit a malformed tool call (400 tool_use_failed); a resample usually fixes it.
-            transient = exc.status_code in {408, 500, 502, 503, 504} or "tool_use_failed" in str(exc)
+            # output_parse_failed: model wrote prose where a tool call was expected (W17: v1-v3 traces show
+            # this caused every hard failure); resampling at temperature > 0 usually yields a valid call.
+            transient = exc.status_code in {408, 500, 502, 503, 504} or any(
+                code in str(exc) for code in ("tool_use_failed", "output_parse_failed"))
             raise LLMError(f"Groq error: {exc}", retryable=transient) from exc
         except (APIConnectionError, APITimeoutError) as exc:
             raise LLMError(f"Groq connection error: {exc}", retryable=True) from exc

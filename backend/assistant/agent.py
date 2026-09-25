@@ -81,6 +81,7 @@ class AgentRunner:
         max_steps: int | None = None,
         context_mode: str | None = None,
         tool_hook: ToolHook | None = None,
+        system_prompt: str | None = None,
     ):
         self._settings = settings
         self._llm = llm_chain
@@ -88,6 +89,7 @@ class AgentRunner:
         self.max_steps = max_steps or settings.agent_max_steps
         self.context_mode = context_mode or settings.agent_context_mode
         self.tool_hook = tool_hook
+        self.system_prompt = system_prompt or AGENT_SYSTEM_PROMPT  # W17: prompt versions are swappable
         self._sessions: dict[str, dict] = {}  # session_id -> state saved by ask_user
 
     # ------------------------------------------------------------------ loop
@@ -111,7 +113,7 @@ class AgentRunner:
             prompt = self._render(question, notes, history, step_no)
             try:
                 step = await asyncio.wait_for(
-                    self._llm.step(AGENT_SYSTEM_PROMPT, prompt, ALL_SCHEMAS),
+                    self._llm.step(self.system_prompt, prompt, ALL_SCHEMAS),
                     timeout=self._settings.request_timeout_seconds,
                 )
             except (LLMError, asyncio.TimeoutError) as exc:
@@ -138,6 +140,8 @@ class AgentRunner:
 
             name, args = step.call["name"], step.call["args"]
             entry: dict[str, Any] = {"step": step_no, "tool": name, "args": args}
+            if step.text:
+                entry["decision"] = step.text[:300]  # model's own words alongside the call (W17 tracing)
             trace.append(entry)
 
             if name == "finish":

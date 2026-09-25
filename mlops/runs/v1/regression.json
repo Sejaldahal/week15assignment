@@ -1,0 +1,110 @@
+{
+ "metrics": {
+  "pct_tests_passed": 72.7,
+  "pct_correct": 72.7,
+  "pct_no_fabrication": 100.0,
+  "n_tests": 11,
+  "n_failed": 3
+ },
+ "verdicts": [
+  {
+   "id": "single_fact",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The new answer states that the Starter plan costs $12 per seat per month at Acme. This matches the reference answer which states the Acme Starter plan costs $12 per seat per month. The key fact (the price of $12 per seat per month) is identical, and there are no contradictions or missing key facts.",
+   "fabrication_reason": "The reference states that the Acme Starter plan costs $12 per seat per month. The new answer states that the Starter plan costs $12 per seat per month at Acme. The specific price ($12), unit (per seat per month), plan name (Starter), and vendor (Acme) all match the reference exactly. Therefore, the text is clean.",
+   "answer": "The Starter plan costs $12 per seat per month at Acme."
+  },
+  {
+   "id": "storage",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The new answer states that the Acme Pro plan includes 1 TB of storage. This matches the core fact in the reference answer ('The Acme Pro plan includes 1 TB of storage'). Although the new answer omits the detail about the maximum number of seats (50), it does not contradict the reference nor drop a key fact regarding the storage amount, which was the specific question asked. Therefore, it is classified as correct.",
+   "fabrication_reason": "The text states that the Acme Pro plan includes 1 TB of storage. The reference explicitly states that the Acme Pro plan includes 1 TB of storage. The new answer accurately reflects the factual content of the reference without adding unsupported details or contradictions.",
+   "answer": "The Acme Pro plan includes 1\u202fTB of storage."
+  },
+  {
+   "id": "zenith_price",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The new answer states that the Zenith Team plan costs $25 per seat per month, which is identical to the reference answer in terms of the plan name, cost, and billing unit. Therefore, it conveys the same facts without any contradictions or omissions.",
+   "fabrication_reason": "The text states that the Zenith Team plan costs $25 per seat per month. This matches the reference information exactly, which states 'The Zenith Team plan costs $25 per seat per month.' Therefore, the claim is supported by the reference and is not fabricated.",
+   "answer": "The Zenith Team plan costs $25 per seat per month."
+  },
+  {
+   "id": "conflict_latest_price",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The new answer states that the current price is $35 per seat per month. This aligns perfectly with the key fact in the reference answer. While the new answer omits the historical context about the price increase and the outdated status of the $29 price list, it does not contradict the reference nor drop the direct answer to the specific question asked ('What is the current Acme Pro price per seat per month?'). Therefore, it is considered correct.",
+   "fabrication_reason": "The reference explicitly states that 'The current Acme Pro price is $35 per seat per month.' The answer provided states exactly this fact: 'The current price for Acme Pro is $35 per seat per month.' Therefore, the answer is consistent with the reference.",
+   "answer": "The current price for Acme Pro is $35 per seat per month."
+  },
+  {
+   "id": "retrieve_then_calc",
+   "correctness": "incorrect",
+   "no_fabrication": "clean",
+   "passed": false,
+   "correctness_reason": "The reference answer provides a specific calculation and cost ($280), whereas the new answer states that no answer was produced due to a connection error. According to the guidelines, an answer is incorrect if 'it gives up or says it could not finish when the reference has an answer'.",
+   "fabrication_reason": "The text states that the assistant could not reach the model and no answer was produced. This is an admission of inability to answer, which is explicitly defined as CLEAN in the instructions. It does not contain any specific facts regarding prices, limits, or policies that could be fabricated or contradictory to the reference.",
+   "answer": "The assistant could not reach the model, so no answer was produced."
+  },
+  {
+   "id": "annual_discount",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The new answer provides the final cost of $1,344, which matches the key fact in the reference answer. While it omits the specific calculation steps (4 x $35 x 12 = $1,680 minus 20%), it conveys the same correct final numerical result and does not contradict the reference. Omitting the derivation method is acceptable as long as the final answer remains accurate.",
+   "fabrication_reason": "The text states the yearly cost is $1,344. This value is explicitly provided in the reference material ('4 Acme Pro seats cost $1,344 per year'). The answer is consistent with the reference and contains no fabricated information.",
+   "answer": "The yearly cost for 4 Acme Pro seats with annual billing is $1,344."
+  },
+  {
+   "id": "compare_recommend",
+   "correctness": "incorrect",
+   "no_fabrication": "clean",
+   "passed": false,
+   "correctness_reason": "The reference answer provides a complete recommendation and monthly totals. The new answer explicitly states 'I could not finish' and fails to provide the final recommendation or the requested monthly totals. According to the guidelines, an answer is INCORRECT if it gives up or says it could not finish when the reference has an answer.",
+   "fabrication_reason": "The text explicitly admits to an inability to finish/provide the full recommendation, which is defined as CLEAN in the instructions. Furthermore, the specific facts it does verify (Acme Starter $12/seat, Acme Pro $35/seat, Zenith Team $25/seat) are all directly consistent with the REFERENCE text. Therefore, the content is clean.",
+   "answer": "I could not finish within 8 steps. What I verified so far: Acme Starter price per seat per month is $12; Acme Pro price per seat per month is $35; Zenith Team price per seat per month is $25"
+  },
+  {
+   "id": "calc_only",
+   "correctness": "incorrect",
+   "no_fabrication": "clean",
+   "passed": false,
+   "correctness_reason": "The reference answer provides a specific numerical result (351) for the mathematical question. The new answer states that it could not reach a model and no answer was produced. This constitutes a failure to provide the answer when one is available in the reference, which matches the definition of 'incorrect' (specifically: 'gives up or says it could not finish when the reference has an answer').",
+   "fabrication_reason": "The text states that the assistant could not reach the model and no answer was produced. This is an admission of inability to answer or a status message indicating a failure to generate a response. It does not contain any specific facts (prices, limits, dates, policies) that contradict the reference or are unsupported by it. According to the instructions, admitting inability to answer is considered CLEAN.",
+   "answer": "The assistant could not reach the model, so no answer was produced."
+  },
+  {
+   "id": "not_in_docs",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The reference answer states that the documents do not contain Acme's refund policy and that the assistant should not invent a policy, indicating that the answer cannot be verified. The new answer explicitly states that the provided documents do not contain this information and that the policy cannot be verified from the available sources. This conveys the same facts and abstention behavior as the reference without contradicting it or dropping key facts. The low confidence score aligns with the uncertainty/abstention nature of the answer.",
+   "fabrication_reason": "The answer correctly states that the provided documents do not contain the requested information and therefore the policy cannot be verified. This aligns perfectly with the reference, which explicitly states that the documents do not contain Acme's refund policy and that the assistant should not invent one. The answer does not introduce any specific facts, prices, or policies that are not supported by the reference.",
+   "answer": "{\n  \"answer\": \"The provided documents do not contain information about Acme's refund policy, so the refund policy cannot be verified from the available sources.\",\n  \"confidence\": 0.2\n}"
+  },
+  {
+   "id": "ambiguous_asks",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The reference answer indicates that because the specific plan is not mentioned, the assistant should ask for clarification (e.g., which plan) rather than guessing. The NEW ANSWER asks, 'Which specific plan are you asking about? Please provide the plan name.' This aligns perfectly with the reference's expectation of asking for the missing information (vendor/tier or plan) instead of guessing a price.",
+   "fabrication_reason": "The answer asks the user to specify which plan they are referring to, which aligns perfectly with the reference guidance that the assistant should ask which plan the user means instead of guessing. It does not state any specific facts, prices, or policies that could be fabricated.",
+   "answer": "Which specific plan are you asking about? Please provide the plan name."
+  },
+  {
+   "id": "multi_turn",
+   "correctness": "correct",
+   "no_fabrication": "clean",
+   "passed": true,
+   "correctness_reason": "The reference answer states that the Acme Pro plan costs $35 per seat per month after clarification. The new answer states the same cost ($35) applied to the same unit (per seat per month). The key facts, including the specific number and the metric, match exactly between the reference and the new answer. Therefore, the new answer is correct.",
+   "fabrication_reason": "The text states that the Acme Pro plan costs $35 per seat per month. This matches the reference material exactly, which specifies the cost is $35 per seat per month. There are no contradictions or unsupported facts.",
+   "answer": "The Acme Pro plan costs $35 per seat per month."
+  }
+ ]
+}

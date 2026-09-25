@@ -13,3 +13,5 @@ data/*
 .pytest_cache/
 .DS_Store
 eval/.chroma/
+mlflow.db
+mlruns/

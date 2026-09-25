@@ -1,0 +1,31 @@
+{
+  "v1": {
+    "prompt_file": "mlops/prompts/agent_v1.txt",
+    "max_steps": 8,
+    "context_mode": "notes",
+    "description": "Baseline: the W16 AGENT_SYSTEM_PROMPT, unchanged.",
+    "agent_model": "openai/gpt-oss-120b"
+  },
+  "v2": {
+    "prompt_file": "mlops/prompts/agent_v2.txt",
+    "max_steps": 8,
+    "context_mode": "notes",
+    "description": "Fix v1 failures: prose instead of finish call (3 hard failures), 7x redundant searches on not_in_docs, step budget burned on duplicate searches/notes in compare_recommend.",
+    "agent_model": "openai/gpt-oss-120b"
+  },
+  "v3": {
+    "prompt_file": "mlops/prompts/agent_v3.txt",
+    "max_steps": 12,
+    "context_mode": "notes",
+    "agent_model": "openai/gpt-oss-120b",
+    "description": "v2 failures: 3 hard failures from prose-instead-of-finish persisted, and compare_recommend re-searched entities whose result was cleared before being noted, exhausting 8 steps. Changes: note-before-next-search rule, max_steps 8->12. (agent_model 'openai/gpt-oss-120b' is the config default and was already used by v1/v2, so the model did not change.)"
+  },
+  "v4": {
+    "prompt_file": "mlops/prompts/agent_v3.txt",
+    "max_steps": 12,
+    "context_mode": "notes",
+    "agent_model": "openai/gpt-oss-20b",
+    "provider_fix": "retry Groq output_parse_failed",
+    "description": "v3 regressed (completion 0.58, 4 hard failures): every hard failure was a Groq 400 output_parse_failed that groq.py did not retry. Changes: make output_parse_failed retryable in groq.py; model gpt-oss-120b -> gpt-oss-20b (confounded with the retry fix, see README)."
+  }
+}

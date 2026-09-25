@@ -1,0 +1,31 @@
+[project]
+name = "ai-assistant-mlops"
+version = "0.2.0"
+description = "W15 assistant + W16 agentic feature, with W17 MLOps (MLflow tracking, Evidently regression tests)"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "fastapi==0.115.6",
+    "uvicorn[standard]==0.32.1",
+    "pydantic==2.10.3",
+    "python-multipart==0.0.19",
+    "requests==2.32.3",
+    "python-dotenv==1.0.1",
+    "google-genai==1.75.0",
+    "openai>=1.57",
+    "chromadb==0.5.23",
+    "pypdf==5.1.0",
+    "python-docx==1.1.2",
+    "redis==5.2.1",
+    "streamlit==1.40.2",
+    "httpx==0.28.1",
+    # W17 MLOps
+    "mlflow>=2.14,<3",
+    "sqlalchemy>=2.0,<2.1",
+    "evidently[llm]>=0.7",
+    "pandas",
+    "tabulate>=0.10.0",
+]
+
+[dependency-groups]
+dev = ["pytest==8.3.4", "pytest-asyncio==0.24.0"]
